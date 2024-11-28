@@ -16,7 +16,7 @@ public class ProfissionalServicoDAO extends DBQuery {
 
     // Método para salvar um ProfissionalServico (inserção ou atualização)
     public int save(ProfissionalServico profissionalServico) {
-        if (profissionalServico.getProfissional().getProfissionalid() >= 0) {
+        if (profissionalServico.getProfissionaIdl() >= 0) {
             // Atualiza registro existente
             return this.update(profissionalServico.toArray());
         } else {
@@ -48,8 +48,8 @@ public class ProfissionalServicoDAO extends DBQuery {
             while (rs.next()) {
                 // Inicializa o objeto ProfissionalServico e seus componentes
                 ProfissionalServico profissionalServico = new ProfissionalServico();
-                profissionalServico.getProfissional().setProfissionalid(rs.getInt("profissionalId"));
-                profissionalServico.getServico().setServicoId(rs.getInt("servicoId"));
+                profissionalServico.setProfissionalId(rs.getInt("profissionalId"));
+                profissionalServico.setServicoId(rs.getInt("servicoId"));
                 
                 // Adiciona o objeto à lista
                 list.add(profissionalServico);
@@ -79,8 +79,8 @@ public class ProfissionalServicoDAO extends DBQuery {
             if (rs != null && rs.next()) {
                 // Inicializa o objeto ProfissionalServico com dados do ResultSet
                 profissionalServico = new ProfissionalServico();
-                profissionalServico.getProfissional().setProfissionalid(rs.getInt("profissionalId"));
-                profissionalServico.getServico().setServicoId(rs.getInt("servicoId"));
+                profissionalServico.setProfissionalId(rs.getInt("profissionalId"));
+                profissionalServico.setServicoId(rs.getInt("servicoId"));
             }
         } catch (Exception e) {
             e.printStackTrace();

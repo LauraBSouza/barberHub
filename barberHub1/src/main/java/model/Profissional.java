@@ -16,7 +16,7 @@ public class Profissional {
 	private String estado;
 	private String foto;
 
-	public Profissional( int profissionalId, int estabelecimentoId, String nome, String servico, String cep, String rua, String numero, String complemento, String bairro, String cidade, String estado, String foto ) {
+	public Profissional( int profissionalId, int estabelecimentoId, String nome, String servicoId, String cep, String rua, String numero, String complemento, String bairro, String cidade, String estado, String foto ) {
 		this.setProfissionalid( profissionalId );
 		this.setEstabelecimentoid( estabelecimentoId );
 		this.setNome( nome );
@@ -31,8 +31,12 @@ public class Profissional {
 		this.setFoto( foto );
 	}
 
-	public Profissional() {
+	public Profissional(String string, String string2, String string3, double d, int i) {
 		
+	}
+
+	public Profissional() {
+		// TODO Auto-generated constructor stub
 	}
 
 	public String[] toArray() {

@@ -116,7 +116,14 @@ public class DBConnection implements AutoCloseable {
 	}
 	
 	public Connection getConnection() {
-		return (this.connection);
+	    try {
+	        if (this.connection == null || this.connection.isClosed()) {
+	            this.doConnection(); // Reconecta se necessário
+	        }
+	    } catch (SQLException e) {
+	        e.printStackTrace();
+	    }
+	    return this.connection;
 	}
 
 }

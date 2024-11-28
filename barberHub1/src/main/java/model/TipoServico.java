@@ -5,12 +5,11 @@ import java.util.Arrays;
 public class TipoServico {
 	private int tipoServicoId;
 	private String servico;
-	private String descricao;
 
-	public TipoServico( int tipoServicoId, String servico, String descricao ) {
+	public TipoServico( int tipoServicoId, String servico ) {
 		this.setTiposervicoid( tipoServicoId );
 		this.setServico( servico );
-		this.setDescricao( descricao );
+		
 	}
 
 	public TipoServico() {
@@ -21,7 +20,6 @@ public class TipoServico {
 		return new String[] {
 			String.valueOf(this.getTiposervicoid()),			
 			String.valueOf(this.getServico()),			
-			String.valueOf(this.getDescricao())
 		};
 	}
 
@@ -45,11 +43,4 @@ public class TipoServico {
 		return this.servico;
 	}
 
-	public void setDescricao(String descricao) {
-		this.descricao = descricao;
-	}
-
-	public String getDescricao() {
-		return this.descricao;
-	}
 }

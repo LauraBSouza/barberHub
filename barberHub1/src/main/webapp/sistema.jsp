@@ -80,8 +80,8 @@
 				{
 					data: null,
 					render: function(data, type, row) {
-						return `<button class='btn btn-warning btn-sm editRow' data-id='${row.sistemaId}'>Edit</button> ` +
-						`<button class='btn btn-danger btn-sm deleteRow' data-id='${row.sistemaId}'>Delete</button>`;
+						return '<button class="btn btn-warning btn-sm editRow" data-id='+ row.sistemaId +'>Edit</button>' +
+						'<button class="btn btn-danger btn-sm deleteRow" data-id=' + row.sistemaId +'>Delete</button>';
 					}
 				}
 			]

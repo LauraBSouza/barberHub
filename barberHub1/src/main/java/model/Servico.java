@@ -6,7 +6,8 @@ public class Servico {
 	private int servicoId;
 	private String nome;
 	private String descricao;
-	private TipoServico tipoServico;
+	private int tipoServicoId;
+	private String tipoServicoNome;
 	private double preco;
 	private int duracao;
 
@@ -78,11 +79,19 @@ public class Servico {
 		return this.duracao;
 	}
 
-	public TipoServico getTipoServico() {
-		return this.tipoServico;
+	public int getTipoServicoId() {
+		return this.tipoServicoId;
 	}
 
-	public void setTipoServico(TipoServico tipoServico) {
-		this.tipoServico = tipoServico;
+	public void setTipoServicoId(int tipoServicoId) {
+		this.tipoServicoId = tipoServicoId;
+	}
+
+	public String getTipoServicoNome() {
+		return this.tipoServicoNome;
+	}
+
+	public void setTipoServicoNome(String tipoServicoNome) {
+		this.tipoServicoNome = tipoServicoNome;
 	}
 }

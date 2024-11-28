@@ -90,8 +90,8 @@
                 {
                     data: null,
                     render: function(data, type, row) {
-                        return `<button class='btn btn-warning btn-sm editRow' data-id='${row.agendamentoId}'>Editar</button> ` +
-                               `<button class='btn btn-danger btn-sm deleteRow' data-id='${row.agendamentoId}'>Excluir</button>`;
+                        return '<button class="btn btn-warning btn-sm editRow" data-id=' + row.agendamentoId + '>Editar</button>' +
+                               '<button class="btn btn-danger btn-sm deleteRow" data-id=' + row.agendamentoId + '>Excluir</button>';
                     }
                 }
             ]

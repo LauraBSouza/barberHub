@@ -21,7 +21,6 @@
 			<tr>
 				<th>Tiposervicoid</th>
 				<th>Servico</th>
-				<th>Descricao</th>
 				<th>Actions</th>
 			</tr>
 		</thead>
@@ -61,13 +60,12 @@
 	$(document).ready(function() {
 		var table = $('#dataTable').DataTable({
 			ajax: {
-				url: '/tiposervico',
+				url: '/barberHub1/tipoServico',
 				dataSrc: ''
 			},
 			columns: [
 				{ data: 'tipoServicoId' },
 				{ data: 'servico' },
-				{ data: 'descricao' },
 				{
 					data: null,
 					render: function(data, type, row) {
@@ -83,7 +81,7 @@
 		$('#saveData').on('click', function() {
 			var formData = $('#tiposervicoForm').serialize();
 			$.ajax({
-				url: '/tiposervico',
+				url: '/barberHub1/tipoServico',
 				method: 'POST',
 				data: formData,
 				success: function(response) {

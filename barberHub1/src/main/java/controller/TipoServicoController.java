@@ -11,6 +11,7 @@ import com.google.gson.GsonBuilder;
 import com.google.gson.JsonArray;
 import com.google.gson.JsonObject;
 
+import model.Profissional;
 import model.TipoServico;
 
 import model.TiposervicoDAO;
@@ -87,19 +88,36 @@ public class TipoServicoController extends HttpServlet {
 	}
 
 	@Override
-	protected void doDelete(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
-		response.setContentType("application/json");
-		try {
-			TipoServico tipoServico = gson.fromJson(request.getReader(), TipoServico.class);
-			dao.delete(tipoServico);
-			JsonObject json = new JsonObject();
-			json.addProperty("success", true);
-			response.getWriter().write(gson.toJson(json));
-		} catch (Exception e) {
-			JsonObject json = new JsonObject();
-			json.addProperty("error", e.getMessage());
-			response.getWriter().write(gson.toJson(json));
-		}
-	}
+    protected void doDelete(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
+        response.setContentType("application/json");
+
+        try {
+        	String tipoServicoId = request.getParameter("tipoServicoId");
+
+            if (tipoServicoId != null) {
+                TipoServico tipoServicoExistente = dao.findById(Integer.parseInt(tipoServicoId));
+                
+                if (tipoServicoExistente != null) {
+                    dao.delete(tipoServicoExistente);
+                    
+                    JsonObject json = new JsonObject();
+                    json.addProperty("success", true);
+                    response.getWriter().write(gson.toJson(json));
+                } else {
+                    JsonObject json = new JsonObject();
+                    json.addProperty("error", "Tipo de serviço não encontrado");
+                    response.getWriter().write(gson.toJson(json));
+                }
+            } else {
+                JsonObject json = new JsonObject();
+                json.addProperty("error", "tipoServicoId é necessário");
+                response.getWriter().write(gson.toJson(json));
+            }
+        } catch (Exception e) {
+            JsonObject json = new JsonObject();
+            json.addProperty("error", e.getMessage());
+            response.getWriter().write(gson.toJson(json));
+        }
+    }
 
 }

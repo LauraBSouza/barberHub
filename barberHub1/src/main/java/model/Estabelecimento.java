@@ -18,6 +18,11 @@ public class Estabelecimento {
 	private int statusCadastroId;
 	private String dataCadastro;
 	private String foto;
+	private String profissionalNome;
+	private String profissionalServico;
+	private String servicoNome;
+	private double servicoPreco;
+	private int servicoDuracao;
 
 	public Estabelecimento( int estabelecimentoId, String nome, String email, String senha, String telefone, String cep, String rua, String numero, String complemento, String bairro, String cidade, String estado, int statusCadastroId, String dataCadastro, String foto ) {
 		this.setEstabelecimentoid( estabelecimentoId );
@@ -36,10 +41,63 @@ public class Estabelecimento {
 		this.setDatacadastro( dataCadastro );
 		this.setFoto( foto );
 	}
+	
+	
+
+	public Estabelecimento(int estabelecimentoId, String nome, String email, String senha, String telefone, String cep,
+			String rua, String numero, String complemento, String bairro, String cidade, String estado,
+			int statusCadastroId, String dataCadastro, String foto, String profissionalNome, String profissionalServico,
+			String servicoNome, double servicoPreco, int servicoDuracao) {
+		super();
+		this.estabelecimentoId = estabelecimentoId;
+		this.nome = nome;
+		this.email = email;
+		this.senha = senha;
+		this.telefone = telefone;
+		this.cep = cep;
+		this.rua = rua;
+		this.numero = numero;
+		this.complemento = complemento;
+		this.bairro = bairro;
+		this.cidade = cidade;
+		this.estado = estado;
+		this.statusCadastroId = statusCadastroId;
+		this.dataCadastro = dataCadastro;
+		this.foto = foto;
+		this.profissionalNome = profissionalNome;
+		this.profissionalServico = profissionalServico;
+		this.servicoNome = servicoNome;
+		this.servicoPreco = servicoPreco;
+		this.servicoDuracao = servicoDuracao;
+	}
+
+
+
+	public Estabelecimento(String nome, String email, String telefone, String rua, String bairro,
+            String cidade, String estado, String profissionalNome, String profissionalServico,
+            String servicoNome, double servicoPreco, int servicoDuracao) {
+			this.nome = nome;
+			this.email = email;
+			this.telefone = telefone;
+			this.rua = rua;
+			this.bairro = bairro;
+			this.cidade = cidade;
+			this.estado = estado;
+			this.profissionalNome = profissionalNome;
+			this.profissionalServico = profissionalServico;
+			this.servicoNome = servicoNome;
+			this.servicoPreco = servicoPreco;
+			this.servicoDuracao = servicoDuracao;
+		}
+
+
+
 
 	public Estabelecimento() {
-		
+		// TODO Auto-generated constructor stub
 	}
+
+
 
 	public String[] toArray() {
 		return new String[] {
@@ -184,4 +242,46 @@ public class Estabelecimento {
 	public String getFoto() {
 		return this.foto;
 	}
+
+	public String getProfissionalNome() {
+		return profissionalNome;
+	}
+
+	public void setProfissionalNome(String profissionalNome) {
+		this.profissionalNome = profissionalNome;
+	}
+
+	public String getProfissionalServico() {
+		return profissionalServico;
+	}
+
+	public void setProfissionalServico(String profissionalServico) {
+		this.profissionalServico = profissionalServico;
+	}
+
+	public String getServicoNome() {
+		return servicoNome;
+	}
+
+	public void setServicoNome(String servicoNome) {
+		this.servicoNome = servicoNome;
+	}
+
+	public double getServicoPreco() {
+		return servicoPreco;
+	}
+
+	public void setServicoPreco(double servicoPreco) {
+		this.servicoPreco = servicoPreco;
+	}
+
+	public int getServicoDuracao() {
+		return servicoDuracao;
+	}
+
+	public void setServicoDuracao(int servicoDuracao) {
+		this.servicoDuracao = servicoDuracao;
+	}
+	
+	
 }

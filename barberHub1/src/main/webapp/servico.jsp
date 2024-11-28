@@ -73,47 +73,117 @@
 	</div>
 </div>
 <script>
-	$(document).ready(function() {
-		var table = $('#dataTable').DataTable({
-			ajax: {
-				url: '/servico',
-				dataSrc: ''
-			},
-			columns: [
-				{ data: 'servicoId' },
-				{ data: 'nome' },
-				{ data: 'descricao' },
-				{ data: 'tipoServicoId' },
-				{ data: 'preco' },
-				{ data: 'duracao' },
-				{
-					data: null,
-					render: function(data, type, row) {
-						return `<button class='btn btn-warning btn-sm editRow' data-id='${row.servicoId}'>Edit</button> ` +
-						`<button class='btn btn-danger btn-sm deleteRow' data-id='${row.servicoId}'>Delete</button>`;
-					}
-				}
-			]
-		});
-		$('#addNew').on('click', function() {
-			$('#formModal').modal('show');
-		});
-		$('#saveData').on('click', function() {
-			var formData = $('#servicoForm').serialize();
-			$.ajax({
-				url: '/servico',
-				method: 'POST',
-				data: formData,
-				success: function(response) {
-					table.ajax.reload();
-					$('#formModal').modal('hide');
-				},
-				error: function(xhr) {
-					alert('Error: ' + xhr.responseText);
-				}
-			});
-		});
-	});
+$(document).ready(function() {
+    // Inicializando a tabela com DataTables e carregando dados via AJAX
+    $('#tabelaServicos').DataTable({
+        "ajax": {
+            "url": "/barberHub1/servico", // Substitua pela URL do seu servlet ou endpoint
+            "type": "GET",
+            "dataSrc": "" // Use um campo específico se o JSON estiver encapsulado
+        },
+        "columns": [
+            { "data": "servicoId" },
+            { "data": "nome" },
+            { "data": "descricao" },
+            { "data": "tipoServicoNome" },
+            { "data": "preco" },
+            { 
+                "data": null, 
+                "render": function(data, type, row) {
+                    var id = row.servicoId;
+                    return '<a href="#" class="btn btn-warning btn-sm editRow" data-id="' + id + '">Editar</a>' +
+                           ' <button class="btn btn-danger btn-sm deleteRow" data-id="' + id + '">Excluir</button>';
+                }
+            }
+        ],
+        "language": {
+            "url": "//cdn.datatables.net/plug-ins/1.13.6/i18n/pt-BR.json"
+        }
+    });
+
+    // Evento de clique no botão "Editar"
+    $('#tabelaServicos').on('click', '.editRow', function() {
+        var id = $(this).data('id'); // Obtém o ID do serviço
+
+        // Fazendo uma requisição AJAX para buscar os dados do serviço
+        $.ajax({
+            url: "/barberHub1/servico?servicoId=" + id, // Substitua pela URL para obter os dados do serviço
+            method: 'GET',
+            success: function(response) {
+                // Preenchendo o modal com os dados retornados
+                $('#servicoId').val(response.servicoId);
+                $('#nomeServico').val(response.nome);
+                $('#descricaoServico').val(response.descricao);
+                $('#tipoServico').val(response.tipoServicoNome);
+                $('#precoServico').val(response.preco);
+
+                // Exibindo o modal
+                $('#formModal').modal('show');
+            },
+            error: function(xhr) {
+                alert('Erro ao buscar dados: ' + xhr.responseText);
+            }
+        });
+    });
+
+    // Evento de envio do formulário para salvar as alterações
+    $('#editarServicoForm').submit(function(e) {
+        e.preventDefault(); // Previne o comportamento padrão de submit
+
+        var servicoId = $('#servicoId').val();
+        var nome = $('#nomeServico').val();
+        var descricao = $('#descricaoServico').val();
+        var tipoServico = $('#tipoServico').val();
+        var preco = $('#precoServico').val();
+
+        // Envia os dados atualizados de volta ao servidor
+        var formData = {
+            servicoId: servicoId,
+            nome: nome,
+            descricao: descricao,
+            tipoServicoNome: tipoServico,
+            preco: preco
+        };
+
+        $.ajax({
+            url: "/barberHub1/servico?servicoId=" + servicoId,  // Certifique-se de que o ID está sendo enviado na URL
+            method: 'PUT',  // Mude para PUT
+            data: JSON.stringify(formData),  // Envie os dados como JSON
+            contentType: 'application/json',  // Defina o tipo de conteúdo como JSON
+            success: function(response) {
+                alert('Serviço atualizado com sucesso!');
+                // Fechar o modal
+                $('#formModal').modal('hide');
+                // Recarregar a tabela de serviços
+                $('#tabelaServicos').DataTable().ajax.reload();
+            },
+            error: function(xhr) {
+                alert('Erro ao atualizar serviço: ' + xhr.responseText);
+            }
+        });
+    });
+
+    // Evento de clique no botão "Excluir"
+    $('#tabelaServicos').on('click', '.deleteRow', function() {
+        var id = $(this).data('id'); // Obtém o ID do serviço
+
+        if (confirm("Você tem certeza que deseja excluir este serviço?")) {
+            // Envia uma requisição AJAX para excluir o serviço
+            $.ajax({
+                url: "/barberHub1/servico?servicoId=" + id,  // Substitua pela URL do seu servlet ou endpoint
+                method: 'DELETE',  // Mude para DELETE
+                success: function(response) {
+                    alert('Serviço excluído com sucesso!');
+                    // Recarregar a tabela de serviços
+                    $('#tabelaServicos').DataTable().ajax.reload();
+                },
+                error: function(xhr) {
+                    alert('Erro ao excluir serviço: ' + xhr.responseText);
+                }
+            });
+        }
+    });
+});
 </script>
 </body>
 </html>

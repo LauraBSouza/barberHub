@@ -5,15 +5,15 @@ import java.sql.Time;
 
 public class Disponibilidade {
 	private int disponibilidadeId;
-	private int profissionalId;
+	private Profissional profissional;
 	private String data;
 	private Time horaInicio;
 	private Time horaFim;
 	private boolean em_agendamento;
 
-	public Disponibilidade( int disponibilidadeId, int profissionalId, String data, Time horaInicio, Time horaFim, boolean em_agendamento ) {
+	public Disponibilidade( int disponibilidadeId, Profissional profissional, String data, Time horaInicio, Time horaFim, boolean em_agendamento ) {
 		this.setDisponibilidadeid( disponibilidadeId );
-		this.setProfissionalid( profissionalId );
+		this.setProfissional( profissional );
 		this.setData( data );
 		this.setHorainicio( horaInicio );
 		this.setHorafim( horaFim );
@@ -27,7 +27,7 @@ public class Disponibilidade {
 	public String[] toArray() {
 		return new String[] {
 			String.valueOf(this.getDisponibilidadeid()),			
-			String.valueOf(this.getProfissionalid()),			
+			String.valueOf(this.getProfissional()),			
 			String.valueOf(this.getData()),			
 			String.valueOf(this.getHorainicio()),			
 			String.valueOf(this.getHorafim()),			
@@ -47,12 +47,12 @@ public class Disponibilidade {
 		return this.disponibilidadeId;
 	}
 
-	public void setProfissionalid(int profissionalId) {
-		this.profissionalId = profissionalId;
+	public void setProfissional(Profissional profissional) {
+		this.profissional = profissional;
 	}
 
-	public int getProfissionalid() {
-		return this.profissionalId;
+	public Profissional getProfissional() {
+		return this.profissional;
 	}
 
 	public void setData(String data) {

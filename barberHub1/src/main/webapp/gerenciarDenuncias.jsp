@@ -2,7 +2,7 @@
 <!DOCTYPE html>
 <html>
 <head>
-	<title>Pagamento Management</title>
+	<title>Denuncia Management</title>
 	<link href="https://cdn.datatables.net/1.13.6/css/jquery.dataTables.min.css" rel="stylesheet">
 	<link href="https://cdnjs.cloudflare.com/ajax/libs/bootstrap/5.3.0/css/bootstrap.min.css" rel="stylesheet">
 	<script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
@@ -12,18 +12,18 @@
 </head>
 <body>
 <div class="container my-4">
-	<h1>Pagamento Management</h1>
+	<h1>Denuncia Management</h1>
 	<div class="mb-3">
-		<button class="btn btn-primary" id="addNew">Add New Pagamento</button>
+		<button class="btn btn-primary" id="addNew">Add New Denuncia</button>
 	</div>
 	<table id="dataTable" class="table table-striped">
 		<thead>
 			<tr>
-				<th>Pagamentoid</th>
-				<th>Agendamentoid</th>
-				<th>Valor</th>
-				<th>Metodo</th>
-				<th>Status</th>
+				<th>Denunciaid</th>
+				<th>Estabelecimentoid</th>
+				<th>Clienteid</th>
+				<th>Descricao</th>
+				<th>Datadenuncia</th>
 				<th>Actions</th>
 			</tr>
 		</thead>
@@ -33,30 +33,30 @@
 	<div class="modal-dialog">
 		<div class="modal-content">
 			<div class="modal-header">
-				<h5 class="modal-title">Pagamento Form</h5>
+				<h5 class="modal-title">Denuncia Form</h5>
 				<button type="button" class="btn-close" data-bs-dismiss="modal"></button>
 			</div>
 			<div class="modal-body">
-				<form id="pagamentoForm">
+				<form id="denunciaForm">
 					<div class="mb-3">
-						<label for="pagamentoId" class="form-label">Pagamentoid</label>
-						<input type="text" id="pagamentoId" name="pagamentoId" class="form-control">
+						<label for="denunciaId" class="form-label">Denunciaid</label>
+						<input type="text" id="denunciaId" name="denunciaId" class="form-control">
 					</div>
 					<div class="mb-3">
-						<label for="agendamentoId" class="form-label">Agendamentoid</label>
-						<input type="text" id="agendamentoId" name="agendamentoId" class="form-control">
+						<label for="estabelecimentoId" class="form-label">Estabelecimentoid</label>
+						<input type="text" id="estabelecimentoId" name="estabelecimentoId" class="form-control">
 					</div>
 					<div class="mb-3">
-						<label for="valor" class="form-label">Valor</label>
-						<input type="text" id="valor" name="valor" class="form-control">
+						<label for="clienteId" class="form-label">Clienteid</label>
+						<input type="text" id="clienteId" name="clienteId" class="form-control">
 					</div>
 					<div class="mb-3">
-						<label for="metodo" class="form-label">Metodo</label>
-						<input type="text" id="metodo" name="metodo" class="form-control">
+						<label for="descricao" class="form-label">Descricao</label>
+						<input type="text" id="descricao" name="descricao" class="form-control">
 					</div>
 					<div class="mb-3">
-						<label for="status" class="form-label">Status</label>
-						<input type="text" id="status" name="status" class="form-control">
+						<label for="dataDenuncia" class="form-label">Datadenuncia</label>
+						<input type="text" id="dataDenuncia" name="dataDenuncia" class="form-control">
 					</div>
 				</form>
 			</div>
@@ -71,20 +71,20 @@
 	$(document).ready(function() {
 		var table = $('#dataTable').DataTable({
 			ajax: {
-				url: '/pagamento',
+				url: '/barberHub1/denuncia',
 				dataSrc: ''
 			},
 			columns: [
-				{ data: 'pagamentoId' },
-				{ data: 'agendamentoId' },
-				{ data: 'valor' },
-				{ data: 'metodo' },
-				{ data: 'status' },
+				{ data: 'denunciaId' },
+				{ data: 'estabelecimentoId' },
+				{ data: 'clienteId' },
+				{ data: 'descricao' },
+				{ data: 'dataDenuncia' },
 				{
 					data: null,
 					render: function(data, type, row) {
-						return '<button class="btn btn-warning btn-sm editRow" data-id=' + row.pagamentoId + '>Edit</button>' +
-						'<button class="btn btn-danger btn-sm deleteRow" data-id=' + row.pagamentoId + '>Delete</button>';
+						return `<button class='btn btn-warning btn-sm editRow' data-id='${row.denunciaId}'>Edit</button> ` +
+						`<button class='btn btn-danger btn-sm deleteRow' data-id='${row.denunciaId}'>Delete</button>`;
 					}
 				}
 			]
@@ -93,9 +93,9 @@
 			$('#formModal').modal('show');
 		});
 		$('#saveData').on('click', function() {
-			var formData = $('#pagamentoForm').serialize();
+			var formData = $('#denunciaForm').serialize();
 			$.ajax({
-				url: '/pagamento',
+				url: '/denuncia',
 				method: 'POST',
 				data: formData,
 				success: function(response) {

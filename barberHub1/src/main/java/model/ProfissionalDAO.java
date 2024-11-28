@@ -1,99 +1,134 @@
 package model;
 
-import java.sql.Connection;
-import java.sql.PreparedStatement;
-import java.sql.ResultSet;
-import java.sql.SQLException;
-import java.sql.Statement;
+import database.DBConnection;
+import java.sql.*;
 import java.util.ArrayList;
 
-import database.DBConnection;
-import database.DBQuery;
+public class ProfissionalDAO {
 
-public class ProfissionalDAO extends DBQuery {
+    private DBConnection dbConnection;
 
     public ProfissionalDAO() {
-        this.setTableName("profissional");
-        this.setFieldsName("profissionalId, estabelecimentoId, nome, servico, cep, rua, numero, complemento, bairro, cidade, estado, foto");
-        this.setFieldKey("profissionalId");
+        this.dbConnection = new DBConnection(); // Instância da conexão com o banco de dados
     }
 
     public int save(Profissional profissional) {
-        if (profissional.getProfissionalid() > 0) {
-            return this.update(profissional.toArray());
+        // Verifica se o servicoId é maior que 0, ou seja, se é um update ou insert
+        if (profissional.getProfissionalid() >= 0) {
+            return this.update(profissional);
         } else {
-            return this.insert(profissional.toArray());
+            return this.insert(profissional);
         }
     }
 
-    public int insert(Object[] values) {
-        String query = "INSERT INTO " + this.getTableName() + " (" + this.getFieldsName() + ") VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)";
-        try (DBConnection dbConn = new DBConnection();
-             Connection conn = dbConn.getConnection();
-             PreparedStatement stmt = conn.prepareStatement(query, Statement.RETURN_GENERATED_KEYS)) {
+    private int insert(Profissional profissional) {
+        String query = "INSERT INTO profissional (estabelecimentoId, nome, servico, cep, rua, numero, complemento, bairro, cidade, estado, foto) " +
+                       "VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)";
+        try (Connection connection = dbConnection.getConnection();
+             PreparedStatement statement = connection.prepareStatement(query, Statement.RETURN_GENERATED_KEYS)) {
 
-            for (int i = 0; i < values.length; i++) {
-                stmt.setObject(i + 1, values[i]);
+            // Verifique se os campos obrigatórios estão preenchidos
+            if (profissional.getNome() == null || profissional.getNome().isEmpty()) {
+                return 0;
             }
 
-            int affectedRows = stmt.executeUpdate(); 
+            statement.setInt(1, profissional.getEstabelecimentoid());
+            statement.setString(2, profissional.getNome());
+            statement.setString(3, profissional.getServico());
+            statement.setString(4, profissional.getCep());
+            statement.setString(5, profissional.getRua());
+            statement.setString(6, profissional.getNumero());
+            statement.setString(7, profissional.getComplemento());
+            statement.setString(8, profissional.getBairro());
+            statement.setString(9, profissional.getCidade());
+            statement.setString(10, profissional.getEstado());
+            statement.setString(11, profissional.getFoto());
+
+            int affectedRows = statement.executeUpdate();
             if (affectedRows > 0) {
-                try (ResultSet generatedKeys = stmt.getGeneratedKeys()) {
+                try (ResultSet generatedKeys = statement.getGeneratedKeys()) {
                     if (generatedKeys.next()) {
-                        // Obtém o ID gerado
-                        int generatedId = generatedKeys.getInt(1);
-                        // Atualiza o ID no objeto Sistema
-                        ((Sistema) values[0]).setSistemaid(generatedId);  // Atribui o ID gerado
+                        return generatedKeys.getInt(1); // Retorna o ID gerado
                     }
                 }
             }
-            return affectedRows;
-        } catch (Exception e) {
+            return 0;
+        } catch (SQLException e) {
             e.printStackTrace();
             return 0;
         }
     }
 
-    
+    public int update(Profissional profissional) {
+        String query = "UPDATE profissional SET estabelecimentoId = ?, nome = ?, servico = ?, cep = ?, rua = ?, numero = ?, complemento = ?, bairro = ?, cidade = ?, estado = ?, foto = ? WHERE profissionalId = ?";
+        try (Connection connection = dbConnection.getConnection();
+             PreparedStatement statement = connection.prepareStatement(query)) {
+
+            // Verifique se os campos obrigatórios estão preenchidos
+            if (profissional.getNome() == null || profissional.getNome().isEmpty()) {
+                return 0;  // Retorna 0 para indicar que a atualização não foi realizada devido a dados inválidos
+            }
+
+            statement.setInt(1, profissional.getEstabelecimentoid());
+            statement.setString(2, profissional.getNome());
+            statement.setString(3, profissional.getServico());
+            statement.setString(4, profissional.getCep());
+            statement.setString(5, profissional.getRua());
+            statement.setString(6, profissional.getNumero());
+            statement.setString(7, profissional.getComplemento());
+            statement.setString(8, profissional.getBairro());
+            statement.setString(9, profissional.getCidade());
+            statement.setString(10, profissional.getEstado());
+            statement.setString(11, profissional.getFoto());
+            statement.setInt(12, profissional.getProfissionalid());
+
+            int affectedRows = statement.executeUpdate();
+            if (affectedRows > 0) {
+                return 1;  // Retorna 1 para indicar que a atualização foi bem-sucedida
+            } else {
+                return 0;  // Retorna 0 se nenhuma linha foi afetada
+            }
+        } catch (SQLException e) {
+            e.printStackTrace();
+            return -1;  // Retorna -1 para indicar que ocorreu um erro
+        }
+    }
+
+
     public int delete(Profissional profissional) {
         if (profissional.getProfissionalid() != 0) {
-            String query = "DELETE FROM " + this.getTableName() + " WHERE " + this.getFieldKey() + " = ?";
-            try (DBConnection dbConn = new DBConnection();
-                 Connection conn = dbConn.getConnection();
-                 PreparedStatement stmt = conn.prepareStatement(query)) {
-
-                stmt.setInt(1, profissional.getProfissionalid());
-                return stmt.executeUpdate(); 
-            } catch (Exception e) {
+            String query = "DELETE FROM profissional WHERE profissionalId = ?";
+            try (Connection connection = dbConnection.getConnection();
+                 PreparedStatement statement = connection.prepareStatement(query)) {
+                statement.setInt(1, profissional.getProfissionalid());
+                return statement.executeUpdate();
+            } catch (SQLException e) {
                 e.printStackTrace();
                 return 0;
             }
         }
         return 0;
     }
-    
+
     public int deleteById(int id) {
-        String query = "DELETE FROM profissional WHERE id = ?";
-        try (DBConnection dbConn = new DBConnection();
-        		Connection conn = dbConn.getConnection();
-        		 PreparedStatement stmt = conn.prepareStatement(query)) {
-            stmt.setInt(1, id);
-            return stmt.executeUpdate();
+        String query = "DELETE FROM profissional WHERE profissionalId = ?";
+        try (Connection connection = dbConnection.getConnection();
+             PreparedStatement statement = connection.prepareStatement(query)) {
+            statement.setInt(1, id);
+            return statement.executeUpdate();
         } catch (SQLException e) {
             e.printStackTrace();
-            return 0; 
+            return 0;
         }
     }
 
-
-    public ResultSet select(String where) {
-        return super.select(where); 
-    }
-
     public ArrayList<Profissional> findAll() {
-        ResultSet rs = this.select("");
+        String query = "SELECT * FROM profissional";
         ArrayList<Profissional> list = new ArrayList<>();
-        try {
+        try (Connection connection = dbConnection.getConnection();
+             PreparedStatement statement = connection.prepareStatement(query);
+             ResultSet rs = statement.executeQuery()) {
+
             while (rs.next()) {
                 Profissional profissional = new Profissional();
                 profissional.setProfissionalid(rs.getInt("profissionalId"));
@@ -110,65 +145,39 @@ public class ProfissionalDAO extends DBQuery {
                 profissional.setFoto(rs.getString("foto"));
                 list.add(profissional);
             }
-        } catch (Exception e) {
+        } catch (SQLException e) {
             e.printStackTrace();
         }
         return list;
     }
 
     public Profissional findById(int id) {
-        System.out.println("Buscando profissional com ID: " + id);  // Log para verificar o ID
+        String query = "SELECT * FROM profissional WHERE profissionalId = ?";
+        try (Connection connection = dbConnection.getConnection();
+             PreparedStatement statement = connection.prepareStatement(query)) {
 
-        // Corrigindo a consulta SQL para garantir que ela está correta
-        String sql = "SELECT profissionalId, estabelecimentoId, nome, servico, cep, rua, numero, complemento, bairro, cidade, estado, foto FROM profissional WHERE profissionalId = ?";
-
-        
-        try (DBConnection dbConn = new DBConnection();
-             Connection conn = dbConn.getConnection();
-             PreparedStatement stmt = conn.prepareStatement(sql)) {
-            
-            stmt.setInt(1, id);  // Definindo o parâmetro ID na consulta
-            ResultSet rs = stmt.executeQuery();  // Executando a consulta
-            
-            if (rs != null && rs.next()) {
-                Profissional profissional = new Profissional();
-                profissional.setProfissionalid(rs.getInt("profissionalId"));
-                profissional.setEstabelecimentoid(rs.getInt("estabelecimentoId"));
-                profissional.setNome(rs.getString("nome"));
-                profissional.setServico(rs.getString("servico"));
-                profissional.setCep(rs.getString("cep"));
-                profissional.setRua(rs.getString("rua"));
-                profissional.setNumero(rs.getString("numero"));
-                profissional.setComplemento(rs.getString("complemento"));
-                profissional.setBairro(rs.getString("bairro"));
-                profissional.setCidade(rs.getString("cidade"));
-                profissional.setEstado(rs.getString("estado"));
-                profissional.setFoto(rs.getString("foto"));
-                return profissional;
-            } else {
-                System.out.println("Profissional não encontrado para ID: " + id);  // Log se não encontrar
+            statement.setInt(1, id);
+            try (ResultSet rs = statement.executeQuery()) {
+                if (rs.next()) {
+                    Profissional profissional = new Profissional();
+                    profissional.setProfissionalid(rs.getInt("profissionalId"));
+                    profissional.setEstabelecimentoid(rs.getInt("estabelecimentoId"));
+                    profissional.setNome(rs.getString("nome"));
+                    profissional.setServico(rs.getString("servico"));
+                    profissional.setCep(rs.getString("cep"));
+                    profissional.setRua(rs.getString("rua"));
+                    profissional.setNumero(rs.getString("numero"));
+                    profissional.setComplemento(rs.getString("complemento"));
+                    profissional.setBairro(rs.getString("bairro"));
+                    profissional.setCidade(rs.getString("cidade"));
+                    profissional.setEstado(rs.getString("estado"));
+                    profissional.setFoto(rs.getString("foto"));
+                    return profissional;
+                }
             }
-        } catch (Exception e) {
+        } catch (SQLException e) {
             e.printStackTrace();
         }
         return null;
     }
-    public ResultSet select1(String where) {
-        String query = "SELECT * FROM " + this.getTableName();
-        if (!where.isEmpty()) {
-            query += " WHERE " + where;
-        }
-
-        try (DBConnection dbConn = new DBConnection();
-             Connection conn = dbConn.getConnection();
-             PreparedStatement stmt = conn.prepareStatement(query)) {
-            
-            return stmt.executeQuery();
-        } catch (Exception e) {
-            e.printStackTrace();
-            return null;
-        }
-    }
 }
-
-

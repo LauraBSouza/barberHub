@@ -4,8 +4,72 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Ver Mais - BarberHub</title>
-    <!-- Incluindo o Bootstrap para design responsivo e moderno -->
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.0.2/dist/css/bootstrap.min.css" rel="stylesheet" />
+    <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+    <style>
+        body {
+            background-color: #f8f9fa;
+            font-family: 'Arial', sans-serif;
+        }
+        .navbar {
+            background-color: #343a40;
+        }
+        .navbar-brand {
+            font-size: 1.5rem;
+        }
+        .container {
+            max-width: 900px;
+            margin-top: 40px;
+        }
+        .card {
+            border: none;
+            border-radius: 15px;
+            overflow: hidden;
+            box-shadow: 0 2px 12px rgba(0, 0, 0, 0.1);
+        }
+        .card-header {
+            background-color: #007bff;
+            color: #fff;
+            font-size: 1.5rem;
+            font-weight: bold;
+            text-align: center;
+            padding: 20px;
+        }
+        .card-body {
+            background-color: #ffffff;
+            padding: 25px;
+            font-size: 1.1rem;
+            color: #333;
+        }
+        .card-body img {
+            max-width: 100%;
+            border-radius: 8px;
+        }
+        .btn-agendar {
+            margin-top: 20px;
+            background-color: #007bff;
+            color: white;
+            border: none;
+            padding: 12px 30px;
+            border-radius: 50px;
+            font-size: 1.2rem;
+            display: block;
+            margin: 20px auto 0;
+        }
+        .btn-agendar:hover {
+            background-color: #0056b3;
+            cursor: pointer;
+        }
+        footer {
+            background-color: #343a40;
+            color: white;
+            padding: 20px 0;
+            text-align: center;
+        }
+        .error-message {
+            color: red;
+        }
+    </style>
 </head>
 <body>
 
@@ -37,93 +101,92 @@
 </nav>
 
 <!-- Conteúdo da Página Ver Mais -->
-<div class="container my-5">
+<div class="container">
     <h2 class="text-center mb-4">Detalhes da Barbearia</h2>
 
-    <!-- Informações da Barbearia -->
-    <div class="row">
-        <div class="col-md-6">
-            <img id="barbearia-imagem" src="https://via.placeholder.com/500" class="img-fluid rounded" alt="Barbearia">
+    <!-- Mensagem de carregamento -->
+    <div id="mensagemStatus" style="display: none;">Carregando dados...</div>
+
+    <!-- Dados da Barbearia -->
+    <div id="dadosEstabelecimento" style="display: none;">
+        <!-- Card de detalhes da barbearia -->
+        <div class="card">
+            <div class="card-header">
+                Informações do Estabelecimento
+            </div>
+            <div class="card-body">
+                <!-- Imagem fictícia da barbearia -->
+                <img src="https://via.placeholder.com/800x400.png?text=Imagem+da+Barbearia" alt="Foto da Barbearia">
+
+                <!-- Dados da Barbearia -->
+                <p><strong>Nome:</strong> <span id="nomeEstabelecimento"></span></p>
+                <p><strong>Email:</strong> <span id="emailEstabelecimento"></span></p>
+                <p><strong>Telefone:</strong> <span id="telefoneEstabelecimento"></span></p>
+                <p><strong>Cidade:</strong> <span id="cidadeEstabelecimento"></span></p>
+                <p><strong>Serviços:</strong> <span id="servicosEstabelecimento"></span></p>
+                <p><strong>Profissionais:</strong> <span id="profissionaisEstabelecimento"></span></p>
+                
+            </div>
         </div>
-        <div class="col-md-6">
-            <h3 id="barbearia-nome">Barbearia X</h3>
-            <p><strong>Localização:</strong> <span id="barbearia-localizacao">Rua da Barbearia, 123 - Centro</span></p>
-            <p><strong>Serviços:</strong></p>
-            <ul id="barbearia-servicos">
-                <!-- Serviços da barbearia serão adicionados aqui -->
-            </ul>
-            <p><strong>Horário de Funcionamento:</strong> <span id="barbearia-horario">Segunda a Sexta - 9:00 às 18:00</span></p>
-            <p><strong>Descrição:</strong> <span id="barbearia-descricao">Descrição da barbearia.</span></p>
 
-            <!-- Botão para Agendar -->
-            <a href="agendarServico.jsp" class="btn btn-primary">Agendar Agora</a>
-        </div>
+        <!-- Botão de Agendar com ID dinâmico -->
+        <a id="btnAgendar" href="#" class="btn-agendar">Agendar Agora</a>
     </div>
-
-    <hr>
-
-    <!-- Avaliações -->
-    <h3 class="mb-3">Avaliações</h3>
-    <div id="avaliacoes-container">
-        <!-- Avaliações serão carregadas aqui -->
-    </div>
-
 </div>
 
 <!-- Rodapé -->
-<footer class="bg-dark text-white text-center py-3 mt-5">
+<footer class="bg-dark text-white py-3">
     <p>© 2024 BarberHub - Todos os direitos reservados.</p>
 </footer>
 
-<!-- Scripts do Bootstrap e jQuery -->
-<script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+<!-- Scripts do Bootstrap -->
 <script src="https://cdn.jsdelivr.net/npm/@popperjs/core@2.10.2/dist/umd/popper.min.js"></script>
 <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.0.2/dist/js/bootstrap.min.js"></script>
 
 <script>
-    // Carregar detalhes da barbearia usando AJAX
     $(document).ready(function() {
-        // Suponha que o ID da barbearia seja 1, ou obtenha o ID de alguma forma (ex: URL)
-        var barbeariaId = 1;
+        // Capturar o ID da URL
+        var urlParams = new URLSearchParams(window.location.search);
+        var id = urlParams.get('id'); // Pega o parâmetro 'id' da URL
 
-        $.ajax({
-            url: '/barberHub1/BarbeariaServlet?id=' + barbeariaId,
-            method: 'GET',
-            dataType: 'json',
-            success: function(data) {
-                // Preenchendo os detalhes da barbearia
-                $('#barbearia-nome').text(data.nome);
-                $('#barbearia-localizacao').text(data.localizacao);
-                $('#barbearia-horario').text(data.horario);
-                $('#barbearia-descricao').text(data.descricao);
-                $('#barbearia-imagem').attr('src', data.imagemUrl);
+        if (id) {
+            // Exibir a mensagem de carregamento
+            $('#mensagemStatus').show();
+            $('#dadosEstabelecimento').hide();
 
-                // Preenchendo a lista de serviços
-                var servicosHtml = '';
-                data.servicos.forEach(function(servico) {
-                    servicosHtml += '<li>' + servico + '</li>';
-                });
-                $('#barbearia-servicos').html(servicosHtml);
+            // Fazer a requisição AJAX
+            $.ajax({
+                url: '/barberHub1/estabelecimento', // Substitua com o caminho da sua API
+                type: 'GET',
+                data: { id: id }, // Envia o ID capturado na URL
+                dataType: 'json',
+                success: function(response) {
+                    console.log('Resposta do servidor:', response);
 
-                // Preenchendo as avaliações
-                var avaliacoesHtml = '';
-                data.avaliacoes.forEach(function(avaliacao) {
-                    avaliacoesHtml += `
-                        <div class="card mt-3">
-                            <div class="card-body">
-                                <h5 class="card-title">${avaliacao.nomeCliente}</h5>
-                                <p class="card-text">"${avaliacao.comentario}"</p>
-                                <p class="card-text"><small class="text-muted">Publicado em ${avaliacao.data}</small></p>
-                            </div>
-                        </div>
-                    `;
-                });
-                $('#avaliacoes-container').html(avaliacoesHtml);
-            },
-            error: function(xhr, status, error) {
-                console.error('Erro ao carregar detalhes da barbearia:', error);
-            }
-        });
+                    // Preencher os dados na página
+                    $('#nomeEstabelecimento').text(response.nome);
+                    $('#emailEstabelecimento').text(response.email);
+                    $('#telefoneEstabelecimento').text(response.telefone);
+                    $('#cidadeEstabelecimento').text(response.cidade);
+                    $('#servicosEstabelecimento').text(response.servicos);
+                    $('#profissionaisEstabelecimento').text(response.profissionais);
+
+                    // Esconder a mensagem de carregamento e exibir os dados
+                    $('#mensagemStatus').hide();
+                    $('#dadosEstabelecimento').show();
+
+                    // Definir o ID no botão de agendamento
+                    $('#btnAgendar').attr('href', 'agendarServico.jsp?id=' + id);
+                },
+                error: function(xhr, status, error) {
+                    console.error('Erro ao buscar estabelecimento: ', error);
+                    $('#mensagemStatus').html('<span class="error-message">Erro ao buscar dados.</span>');
+                }
+            });
+        } else {
+            // Caso não tenha o ID na URL
+            $('#mensagemStatus').html('<span class="error-message">ID não encontrado na URL.</span>');
+        }
     });
 </script>
 

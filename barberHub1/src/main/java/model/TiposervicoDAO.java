@@ -8,7 +8,7 @@ public class TiposervicoDAO extends DBQuery {
 
 	public TiposervicoDAO() {
 		this.setTableName("tipoServico");
-		this.setFieldsName("tipoServicoId, servico, descricao");
+		this.setFieldsName("tipoServicoId, servico");
 		this.setFieldKey("tipoServicoId");
 	}
 
@@ -40,7 +40,6 @@ public class TiposervicoDAO extends DBQuery {
 				TipoServico tipoServico = new TipoServico();
 				tipoServico.setTiposervicoid(rs.getInt("tipoServicoId"));
 				tipoServico.setServico(rs.getString("servico"));
-				tipoServico.setDescricao(rs.getString("descricao"));
 				list.add(tipoServico);
 			}
 		} catch (Exception e) {
@@ -56,7 +55,6 @@ public class TiposervicoDAO extends DBQuery {
 				TipoServico tipoServico = new TipoServico();
 				tipoServico.setTiposervicoid(rs.getInt("tipoServicoId"));
 				tipoServico.setServico(rs.getString("servico"));
-				tipoServico.setDescricao(rs.getString("descricao"));
 				return tipoServico;
 			}
 		} catch (Exception e) {

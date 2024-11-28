@@ -26,7 +26,7 @@ public class ServicoController extends HttpServlet {
 		String servicoId = request.getParameter("servicoId");
 		try {
 			if (servicoId != null) {
-				Servico servico = dao.findById(Integer.parseInt(servicoId));
+				Servico servico = dao.findByIdWithJoin(Integer.parseInt(servicoId));
 				if (servico != null) {
 					String json = gson.toJson(servico);
 					response.getWriter().write(json);
@@ -36,7 +36,7 @@ public class ServicoController extends HttpServlet {
 					response.getWriter().write(gson.toJson(json));
 				}
 			} else {
-				JsonArray jsonArray = gson.toJsonTree(dao.findAll()).getAsJsonArray();
+				JsonArray jsonArray = gson.toJsonTree(dao.findAllWithJoin()).getAsJsonArray();
 				response.getWriter().write(gson.toJson(jsonArray));
 			}
 		} catch (Exception e) {
@@ -64,26 +64,46 @@ public class ServicoController extends HttpServlet {
 
 	@Override
 	protected void doPut(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
-		response.setContentType("application/json");
-		String servicoId = request.getParameter("servicoId");
-		try {
-			if (servicoId != null) {
-				Servico servico = gson.fromJson(request.getReader(), Servico.class);
-				dao.save(servico);
-				JsonObject json = new JsonObject();
-				json.addProperty("success", true);
-				response.getWriter().write(gson.toJson(json));
-			} else {
-				JsonObject json = new JsonObject();
-				json.addProperty("error", "servicoId is required");
-				response.getWriter().write(gson.toJson(json));
-			}
-		} catch (Exception e) {
-			JsonObject json = new JsonObject();
-			json.addProperty("error", e.getMessage());
-			response.getWriter().write(gson.toJson(json));
-		}
+	    response.setContentType("application/json");
+	    String servicoId = request.getParameter("servicoId");
+	    try {
+	        if (servicoId != null) {
+	            // Converte o corpo da requisição para um objeto Servico
+	            Servico servico = gson.fromJson(request.getReader(), Servico.class);
+	            
+	            // Encontre o serviço pelo ID
+	            Servico servicoExistente = dao.findById(Integer.parseInt(servicoId));
+	            if (servicoExistente != null) {
+	                // Atualize os dados do serviço existente
+	                servicoExistente.setNome(servico.getNome());
+	                servicoExistente.setDescricao(servico.getDescricao());
+	                servicoExistente.setTipoServicoId(servico.getTipoServicoId());
+	                servicoExistente.setPreco(servico.getPreco());
+	                
+	                // Salve as alterações no banco de dados
+	                dao.update(servicoExistente);
+
+	                JsonObject json = new JsonObject();
+	                json.addProperty("success", true);
+	                response.getWriter().write(gson.toJson(json));
+	            } else {
+	                // Se o serviço não for encontrado, retorna um erro
+	                JsonObject json = new JsonObject();
+	                json.addProperty("error", "Serviço não encontrado");
+	                response.getWriter().write(gson.toJson(json));
+	            }
+	        } else {
+	            JsonObject json = new JsonObject();
+	            json.addProperty("error", "servicoId é necessário");
+	            response.getWriter().write(gson.toJson(json));
+	        }
+	    } catch (Exception e) {
+	        JsonObject json = new JsonObject();
+	        json.addProperty("error", e.getMessage());
+	        response.getWriter().write(gson.toJson(json));
+	    }
 	}
+
 
 	@Override
 	protected void doDelete(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {

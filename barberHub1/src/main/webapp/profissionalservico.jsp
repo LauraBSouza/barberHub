@@ -56,7 +56,7 @@
 	$(document).ready(function() {
 		var table = $('#dataTable').DataTable({
 			ajax: {
-				url: '/profissionalservico',
+				url: '/barberHub1/profissionalservico',
 				dataSrc: ''
 			},
 			columns: [
@@ -65,8 +65,8 @@
 				{
 					data: null,
 					render: function(data, type, row) {
-						return `<button class='btn btn-warning btn-sm editRow' data-id='${row.profissionalId}'>Edit</button> ` +
-						`<button class='btn btn-danger btn-sm deleteRow' data-id='${row.profissionalId}'>Delete</button>`;
+						return '<button class="btn btn-warning btn-sm editRow" data-id=' + row.profissionalId + '>Edit</button>' +
+						'<button class="btn btn-danger btn-sm deleteRow" data-id=' + row.profissionalId + '>Delete</button>';
 					}
 				}
 			]
@@ -77,7 +77,7 @@
 		$('#saveData').on('click', function() {
 			var formData = $('#profissionalservicoForm').serialize();
 			$.ajax({
-				url: '/profissionalservico',
+				url: '/barberHub1/profissionalservico',
 				method: 'POST',
 				data: formData,
 				success: function(response) {

@@ -76,7 +76,7 @@
 	$(document).ready(function() {
 		var table = $('#dataTable').DataTable({
 			ajax: {
-				url: '/disponibilidade',
+				url: 'barberHub1/disponibilidade',
 				dataSrc: ''
 			},
 			columns: [
@@ -89,8 +89,8 @@
 				{
 					data: null,
 					render: function(data, type, row) {
-						return `<button class='btn btn-warning btn-sm editRow' data-id='${row.disponibilidadeId}'>Edit</button> ` +
-						`<button class='btn btn-danger btn-sm deleteRow' data-id='${row.disponibilidadeId}'>Delete</button>`;
+						return '<button class="btn btn-warning btn-sm editRow" data-id=' + row.disponibilidadeId + '>Edit</button>' +
+						'<button class="btn btn-danger btn-sm deleteRow" data-id=' + row.disponibilidadeId + '>Delete</button>`;
 					}
 				}
 			]

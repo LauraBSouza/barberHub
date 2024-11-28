@@ -3,12 +3,12 @@ package model;
 import java.util.Arrays;
 
 public class ProfissionalServico {
-	private Profissional profissional;
-	private Servico servico;
+	private int profissionalId;
+	private int servicoId;
 
-	public ProfissionalServico( Profissional Profissional, Servico servico ) {
-		this.setProfissional( Profissional );
-		this.setServico( servico );
+	public ProfissionalServico( int profissionalId, int servicoI ) {
+		this.setProfissionalId( profissionalId );
+		this.setServicoId( servicoId );
 	}
 
 	public ProfissionalServico() {
@@ -17,8 +17,8 @@ public class ProfissionalServico {
 
 	public String[] toArray() {
 		return new String[] {
-			String.valueOf(this.getProfissional()),			
-			String.valueOf(this.getServico())
+			String.valueOf(this.getProfissionaIdl()),			
+			String.valueOf(this.getServicoId())
 		};
 	}
 
@@ -26,19 +26,19 @@ public class ProfissionalServico {
 		return Arrays.toString(this.toArray());
 	}
 
-	public void setProfissional(Profissional profissional) {
-		this.profissional = profissional;
+	public void setProfissionalId(int profissionalId) {
+		this.profissionalId = profissionalId;
 	}
 
-	public Profissional getProfissional() {
-		return this.profissional;
+	public int getProfissionaIdl() {
+		return this.profissionalId;
 	}
 
-	public void setServico(Servico servico) {
-		this.servico = servico;
+	public void setServicoId(int servicoId) {
+		this.servicoId = servicoId;
 	}
 
-	public Servico getServico() {
-		return this.servico;
+	public int getServicoId() {
+		return this.servicoId;
 	}
 }

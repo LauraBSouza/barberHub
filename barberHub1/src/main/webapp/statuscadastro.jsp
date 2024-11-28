@@ -56,7 +56,7 @@
 	$(document).ready(function() {
 		var table = $('#dataTable').DataTable({
 			ajax: {
-				url: '/statuscadastro',
+				url: '/barberHub1/statuscadastro',
 				dataSrc: ''
 			},
 			columns: [
@@ -65,8 +65,8 @@
 				{
 					data: null,
 					render: function(data, type, row) {
-						return `<button class='btn btn-warning btn-sm editRow' data-id='${row.statusCadastroId}'>Edit</button> ` +
-						`<button class='btn btn-danger btn-sm deleteRow' data-id='${row.statusCadastroId}'>Delete</button>`;
+						return '<button class="btn btn-warning btn-sm editRow" data-id="' + row.statusCadastroId + '">Edit</button>' +
+						'<button class="btn btn-danger btn-sm deleteRow" data-id=' + row.statusCadastroId +'>Delete</button>';
 					}
 				}
 			]
@@ -77,7 +77,7 @@
 		$('#saveData').on('click', function() {
 			var formData = $('#statuscadastroForm').serialize();
 			$.ajax({
-				url: '/statuscadastro',
+				url: '/barberHub1/statuscadastro',
 				method: 'POST',
 				data: formData,
 				success: function(response) {

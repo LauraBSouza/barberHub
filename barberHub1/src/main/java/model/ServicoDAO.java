@@ -1,73 +1,178 @@
 package model;
 
-import java.sql.ResultSet;
+import database.DBConnection;
+
+import java.sql.*;
 import java.util.ArrayList;
-import database.DBQuery;
 
-public class ServicoDAO extends DBQuery {
+public class ServicoDAO {
 
-	public ServicoDAO() {
-		this.setTableName("servico");
-		this.setFieldsName("servicoId, nome, descricao, tipoServicoId, preco, duracao");
-		this.setFieldKey("servicoId");
-	}
+    private DBConnection dbConnection;
 
-	public int save(Servico servico) {
-		if(servico.getServicoId() >= 0) {
-			return this.update(servico.toArray());
-		} else {
-			return this.insert(servico.toArray());
-		}
-	}
+    public ServicoDAO() {
+        this.dbConnection = new DBConnection(); // Instância da conexão com o banco de dados
+    }
 
-	public int delete(Servico servico) {
-		if(servico.getServicoId() != 0) {
-			return this.delete(servico.toArray());
-		} else {
-			return 0;
-		}
-	}
+    public int save(Servico servico) {
+        // Verifica se o servicoId é maior que 0, ou seja, se é um update ou insert
+        if (servico.getServicoId() >= 0) {
+            return this.update(servico);
+        } else {
+            return this.insert(servico);
+        }
+    }
 
-	public ResultSet select(String where) {
-	    return super.select(where); // Chama o método select da classe base (DBQuery)
-	}
+    public int update(Servico servico) {
+        String query = "UPDATE servico SET nome = ?, descricao = ?, tipoServicoId = ?, preco = ?, duracao = ? WHERE servicoId = ?";
+        try (Connection connection = dbConnection.getConnection();
+             PreparedStatement statement = connection.prepareStatement(query)) {
+             
+            statement.setString(1, servico.getNome());
+            statement.setString(2, servico.getDescricao());
+            statement.setInt(3, servico.getTipoServicoId());
+            statement.setDouble(4, servico.getPreco());
+            statement.setInt(5, servico.getDuracao());
+            statement.setInt(6, servico.getServicoId());
+            return statement.executeUpdate();
+        } catch (SQLException e) {
+            e.printStackTrace();
+            return 0;
+        }
+    }
 
-	public ArrayList<Servico> findAll() {
-		ResultSet rs = this.select("");
-		ArrayList<Servico> list = new ArrayList<>();
-		try {
-			while (rs.next()) {
-				Servico servico = new Servico();
-				servico.getTipoServico().setTiposervicoid(rs.getInt("servicoId"));
-				servico.setNome(rs.getString("nome"));
-				servico.setDescricao(rs.getString("descricao"));
-				servico.getTipoServico().setTiposervicoid(rs.getInt("tipoServicoId"));
-				servico.setPreco(rs.getDouble("preco"));
-				servico.setDuracao(rs.getInt("duracao"));
-				list.add(servico);
-			}
-		} catch (Exception e) {
-			e.printStackTrace();
-		}
-		return list;
-	}
+    private int insert(Servico servico) {
+        String query = "INSERT INTO servico (nome, descricao, tipoServicoId, preco, duracao) VALUES (?, ?, ?, ?, ?)";
+        try (Connection connection = dbConnection.getConnection();
+             PreparedStatement statement = connection.prepareStatement(query, Statement.RETURN_GENERATED_KEYS)) {
+             
+            statement.setString(1, servico.getNome());
+            statement.setString(2, servico.getDescricao());
+            statement.setInt(3, servico.getTipoServicoId());
+            statement.setDouble(4, servico.getPreco());
+            statement.setInt(5, servico.getDuracao());
+            
+            int affectedRows = statement.executeUpdate();
+            if (affectedRows > 0) {
+                try (ResultSet generatedKeys = statement.getGeneratedKeys()) {
+                    if (generatedKeys.next()) {
+                        return generatedKeys.getInt(1); // Retorna o ID gerado
+                    }
+                }
+            }
+            return 0;
+        } catch (SQLException e) {
+            e.printStackTrace();
+            return 0;
+        }
+    }
 
-	public Servico findById(int id) {
-		ResultSet rs = this.select("WHERE " + this.getFieldKey() + " = " + id);
-		try {
-			if (rs.next()) {
-				Servico servico = new Servico();
-				servico.getTipoServico().setTiposervicoid(rs.getInt("servicoId"));
-				servico.setNome(rs.getString("nome"));
-				servico.setDescricao(rs.getString("descricao"));
-				servico.getTipoServico().setTiposervicoid(rs.getInt("tipoServicoId"));
-				servico.setPreco(rs.getDouble("preco"));
-				servico.setDuracao(rs.getInt("duracao"));
-				return servico;
-			}
-		} catch (Exception e) {
-			e.printStackTrace();
-		}
-		return null;
-	}
+    public int delete(Servico servico) {
+        if (servico.getServicoId() != 0) {
+            String query = "DELETE FROM servico WHERE servicoId = ?";
+            try (Connection connection = dbConnection.getConnection();
+                 PreparedStatement statement = connection.prepareStatement(query)) {
+                statement.setInt(1, servico.getServicoId());
+                return statement.executeUpdate();
+            } catch (SQLException e) {
+                e.printStackTrace();
+                return 0;
+            }
+        }
+        return 0;
+    }
+
+    public ArrayList<Servico> findAll() {
+        String query = "SELECT * FROM servico";
+        ArrayList<Servico> list = new ArrayList<>();
+        try (Connection connection = dbConnection.getConnection();
+             PreparedStatement statement = connection.prepareStatement(query);
+             ResultSet rs = statement.executeQuery()) {
+
+            while (rs.next()) {
+                Servico servico = new Servico();
+                servico.setServicoId(rs.getInt("servicoId"));
+                servico.setNome(rs.getString("nome"));
+                servico.setDescricao(rs.getString("descricao"));
+                servico.setTipoServicoId(rs.getInt("tipoServicoId"));
+                servico.setPreco(rs.getDouble("preco"));
+                servico.setDuracao(rs.getInt("duracao"));
+                list.add(servico);
+            }
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
+        return list;
+    }
+
+    public Servico findById(int id) {
+        String query = "SELECT * FROM servico WHERE servicoId = ?";
+        try (Connection connection = dbConnection.getConnection();
+             PreparedStatement statement = connection.prepareStatement(query)) {
+
+            statement.setInt(1, id);
+            try (ResultSet rs = statement.executeQuery()) {
+                if (rs.next()) {
+                    Servico servico = new Servico();
+                    servico.setServicoId(rs.getInt("servicoId"));
+                    servico.setNome(rs.getString("nome"));
+                    servico.setDescricao(rs.getString("descricao"));
+                    servico.setTipoServicoId(rs.getInt("tipoServicoId"));
+                    servico.setPreco(rs.getDouble("preco"));
+                    servico.setDuracao(rs.getInt("duracao"));
+                    return servico;
+                }
+            }
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
+        return null;
+    }
+
+    public ArrayList<Servico> findAllWithJoin() {
+        String query = "SELECT servico.*, tiposervico.servico FROM servico INNER JOIN tiposervico ON servico.tipoServicoId = tiposervico.tipoServicoId";
+        ArrayList<Servico> list = new ArrayList<>();
+        
+        try (Connection connection = dbConnection.getConnection();
+             PreparedStatement statement = connection.prepareStatement(query);
+             ResultSet rs = statement.executeQuery()) {
+
+            while (rs.next()) {
+                Servico servico = new Servico();
+                servico.setServicoId(rs.getInt("servicoId"));
+                servico.setNome(rs.getString("nome"));
+                servico.setDescricao(rs.getString("descricao"));
+                servico.setPreco(rs.getDouble("preco"));
+                servico.setDuracao(rs.getInt("duracao"));
+                servico.setTipoServicoNome(rs.getString("servico"));
+                list.add(servico);
+            }
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
+        return list;
+    }
+
+    public Servico findByIdWithJoin(int id) {
+        String query = "SELECT servico.*, tiposervico.servico FROM servico INNER JOIN tiposervico ON servico.tipoServicoId = tiposervico.tipoServicoId WHERE servico.servicoId = ?";
+        try (Connection connection = dbConnection.getConnection();
+             PreparedStatement statement = connection.prepareStatement(query)) {
+
+            statement.setInt(1, id);
+            try (ResultSet rs = statement.executeQuery()) {
+                if (rs.next()) {
+                    Servico servico = new Servico();
+                    servico.setServicoId(rs.getInt("servicoId"));
+                    servico.setNome(rs.getString("nome"));
+                    servico.setDescricao(rs.getString("descricao"));
+                    servico.setPreco(rs.getDouble("preco"));
+                    servico.setDuracao(rs.getInt("duracao"));
+                    servico.setTipoServicoNome(rs.getString("servico"));
+                    return servico;
+                }
+            }
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
+        return null;
+    }
 }

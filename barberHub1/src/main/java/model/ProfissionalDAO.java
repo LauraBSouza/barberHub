@@ -119,24 +119,19 @@ public class ProfissionalDAO extends DBQuery {
     public Profissional findById(int id) {
         System.out.println("Buscando profissional com ID: " + id);  // Log para verificar o ID
 
-        // SQL para buscar o profissional pelo ID
-        String sql = """
-            SELECT profissionalId, estabelecimentoId, nome, servico, cep, rua, numero, complemento, bairro, cidade, estado, foto
-            FROM profissional WHERE profissionalId = ?
-        """;
+        // Corrigindo a consulta SQL para garantir que ela está correta
+        String sql = "SELECT profissionalId, estabelecimentoId, nome, servico, cep, rua, numero, complemento, bairro, cidade, estado, foto FROM profissional WHERE profissionalId = ?";
 
-        Profissional profissional = null;
-
+        
         try (DBConnection dbConn = new DBConnection();
              Connection conn = dbConn.getConnection();
              PreparedStatement stmt = conn.prepareStatement(sql)) {
-
+            
             stmt.setInt(1, id);  // Definindo o parâmetro ID na consulta
             ResultSet rs = stmt.executeQuery();  // Executando a consulta
-
+            
             if (rs != null && rs.next()) {
-                // Criando o objeto Profissional com os dados retornados
-                profissional = new Profissional();
+                Profissional profissional = new Profissional();
                 profissional.setProfissionalid(rs.getInt("profissionalId"));
                 profissional.setEstabelecimentoid(rs.getInt("estabelecimentoId"));
                 profissional.setNome(rs.getString("nome"));
@@ -149,18 +144,15 @@ public class ProfissionalDAO extends DBQuery {
                 profissional.setCidade(rs.getString("cidade"));
                 profissional.setEstado(rs.getString("estado"));
                 profissional.setFoto(rs.getString("foto"));
+                return profissional;
             } else {
                 System.out.println("Profissional não encontrado para ID: " + id);  // Log se não encontrar
             }
-
         } catch (Exception e) {
             e.printStackTrace();
         }
-
-        return profissional;
+        return null;
     }
-
-    
     public ResultSet select1(String where) {
         String query = "SELECT * FROM " + this.getTableName();
         if (!where.isEmpty()) {

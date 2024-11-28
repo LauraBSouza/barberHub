@@ -1,11 +1,7 @@
 package model;
 
-import java.sql.Connection;
-import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.util.ArrayList;
-
-import database.DBConnection;
 import database.DBQuery;
 
 public class EstabelecimentoDAO extends DBQuery {
@@ -92,42 +88,6 @@ public class EstabelecimentoDAO extends DBQuery {
 		}
 		return null;
 	}
-	
-	public Estabelecimento buscarPorId(int id) {
-        // SQL para buscar a barbearia com os serviços relacionados
-        String sql = """
-            SELECT b.id, b.nome, b.endereco, b.telefone, b.horario_funcionamento, b.descricao, b.imagem_url
-            FROM barbearia b WHERE b.id = ?
-        """;
-
-        Estabelecimento estabelecimento = null;
-        
-        
-
-        try (DBConnection dbConn = new DBConnection(); 
-                Connection conn = dbConn.getConnection(); 
-             PreparedStatement stmt = conn.prepareStatement(sql)) {
-            
-            // Configurando o parâmetro da consulta (ID da barbearia)
-            stmt.setInt(1, id);
-
-            try (ResultSet rs = stmt.executeQuery()) {
-                if (rs.next()) {
-                    // Criando objeto Barbearia com os dados do banco
-                	estabelecimento = new Estabelecimento();
-                	estabelecimento.setEstabelecimentoid(rs.getInt("id"));
-                	estabelecimento.setNome(rs.getString("nome"));
-                	
-
-                    
-                }
-            }
-        } catch (Exception e) {
-            e.printStackTrace();
-        }
-
-        return estabelecimento;
-    }
 	
 	public ArrayList<Estabelecimento> findByTipoServico(int tipoServicoId) {
 	    // Ajuste a consulta para atender à estrutura do seu banco de dados

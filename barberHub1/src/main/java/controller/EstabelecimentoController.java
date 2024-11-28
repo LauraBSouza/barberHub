@@ -38,21 +38,18 @@ public class EstabelecimentoController extends HttpServlet {
 	                JsonObject estabelecimentoJson = new JsonObject();
 	                estabelecimentoJson.addProperty("id", estabelecimento.getEstabelecimentoid());
 	                estabelecimentoJson.addProperty("nome", estabelecimento.getNome());
-	                estabelecimentoJson.addProperty("email", estabelecimento.getEmail());
 	                estabelecimentoJson.addProperty("cidade", estabelecimento.getCidade());
 	                estabelecimentoJson.addProperty("telefone", estabelecimento.getTelefone());
 	                
-					/*
-					 * // Buscando os serviços associados List<ProfissionalServico> servicos =
-					 * (List<ProfissionalServico>)
-					 * profissionalservicoDAO.findById(estabelecimento.getEstabelecimentoid());
-					 * JsonArray servicosJson = new JsonArray(); for (ProfissionalServico servico :
-					 * servicos) { JsonObject servicoJson = new JsonObject();
-					 * servicoJson.addProperty("tipoServico",
-					 * servico.getServico().getTipoServico().getServico()); // Exemplo de como
-					 * acessar o nome do tipo de serviço servicosJson.add(servicoJson); }
-					 * estabelecimentoJson.add("servico", servicosJson);
-					 */
+	                // Buscando os serviços associados
+	                List<ProfissionalServico> servicos = (List<ProfissionalServico>) profissionalservicoDAO.findById(estabelecimento.getEstabelecimentoid());
+	                JsonArray servicosJson = new JsonArray();
+	                for (ProfissionalServico servico : servicos) {
+	                    JsonObject servicoJson = new JsonObject();
+	                    servicoJson.addProperty("tipoServico", servico.getServico().getTipoServico().getServico()); // Exemplo de como acessar o nome do tipo de serviço
+	                    servicosJson.add(servicoJson);
+	                }
+	                estabelecimentoJson.add("servicos", servicosJson);
 
 	                jsonArray.add(estabelecimentoJson);
 	            }

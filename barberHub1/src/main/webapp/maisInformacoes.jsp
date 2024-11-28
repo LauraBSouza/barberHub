@@ -1,13 +1,3 @@
-<%@ page import="java.util.List" %>
-<%@ page import="model.Estabelecimento" %>
-<%@ page import="model.EstabelecimentoDAO" %>
-
-<%
-    // Obter o ID da barbearia passado como parâmetro
-    String id = request.getParameter("id");
-	EstabelecimentoDAO estabelecimentoDAO = new EstabelecimentoDAO();
-    Estabelecimento estabelecimento = estabelecimentoDAO.buscarPorId((Integer.parseInt(id)));
-%>
 <!DOCTYPE html>
 <html lang="pt-BR">
 <head>
@@ -56,7 +46,7 @@
             <img id="barbearia-imagem" src="https://via.placeholder.com/500" class="img-fluid rounded" alt="Barbearia">
         </div>
         <div class="col-md-6">
-            <h3 id="barbearia-nome">- Detalhes</h3>
+            <h3 id="barbearia-nome">Barbearia X</h3>
             <p><strong>Localização:</strong> <span id="barbearia-localizacao">Rua da Barbearia, 123 - Centro</span></p>
             <p><strong>Serviços:</strong></p>
             <ul id="barbearia-servicos">
